@@ -53,6 +53,7 @@ public class heapImplementation{
 
         //this function maintains heap property
         void Heapify(int idx){
+            if(idx < 0 || idx >= size) return;
             while(idx<size){
                 int left_child = 2*idx + 1;
                 int right_child = 2*idx + 2;
