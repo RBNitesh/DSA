@@ -43,6 +43,16 @@ public class heapImplementation{
             }
         }
 
+        int height(){
+            int n = size;
+            int h = 0;
+            while(n > 1){
+                h++;
+                n = n/2;
+            }
+            return h;
+        }
+
         //print the heap
         void print(){
             for(int i=0; i<size; i++){
@@ -86,5 +96,6 @@ public class heapImplementation{
         heap.print();
         heap.delete();
         heap.print();
+        System.out.println(heap.height());
     }
 }
