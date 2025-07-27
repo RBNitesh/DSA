@@ -2,7 +2,7 @@ import java.util.*;
 
 // This class implements a simple graph using an adjacency list
 public class Implementation {
-    static class Edge{
+    public static class Edge{
         int src;
         int dest;
         int wt;
@@ -111,7 +111,6 @@ public class Implementation {
             System.out.print(stack.pop()+" ");
     }
 
-
     // function to check is Cycle exist in directed graph or not
     private static boolean isCycleDirected(ArrayList<Edge>[] graph, int curr, boolean[] isVisited, boolean[] rec){
         isVisited[curr] = true;
@@ -132,7 +131,7 @@ public class Implementation {
     }
 
     public static void main(String[] args) {
-        int V = 4;
+        int V = 4; 
 
         ArrayList<Edge> graph[] = new ArrayList[V];
         createGraph(graph);
