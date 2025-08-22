@@ -49,9 +49,7 @@ public class heapSort{
     }
 
     private static void deleteFirstEle(int[] arr, int n){
-        int last = arr[n-1];
-        arr[n-1] = arr[0];
-        arr[0] = last;
+        
     }
 
     private static void swap(int[] arr, int i, int j){

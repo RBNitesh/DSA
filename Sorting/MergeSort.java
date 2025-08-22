@@ -1,4 +1,4 @@
-package Sorting;
+
 
 public class MergeSort {
     static void display(int[] arr){
@@ -14,9 +14,9 @@ public class MergeSort {
         int[] left=new int[n1];
         int[] right=new int[n2];  
 
-        int i,j,k;
-        for(i=0; i<n1; i++) left[i]=a[low+i];
-        for(j=0; j<n2; j++) right[j]=a[mid+1+j];
+        int i=0,j=0,k=low;
+        for(; i<n1; i++) left[i]=a[low+i];
+        for(; j<n2; j++) right[j]=a[mid+1+j];
         
         i=0;j=0;k=low;
         while(i<n1 && j<n2){
@@ -40,6 +40,7 @@ public class MergeSort {
         int mid=(low+high)/2;
         mergeSort(arr, low, mid);
         mergeSort(arr, mid+1, high);
+        // backtracking
         Merge(arr, low, mid, high);
            
     }
