@@ -1,7 +1,7 @@
 
 import java.util.*;
 
-public class {
+public class cntBoringNumDemo{
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		long L = sc.nextLong();
