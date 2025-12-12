@@ -1,6 +1,6 @@
 import java.util.*;
 
-class UnionFind{
+public class UnionFind{
     int[] parent;
     int[] rank;
 
@@ -37,11 +37,5 @@ class UnionFind{
                 }
             }
         }
-    }
-}
-
-public class UnionFindDemo{
-    public static void main(String[] args){
-        UnionFind uf = new UnionFind(10);
     }
 }
