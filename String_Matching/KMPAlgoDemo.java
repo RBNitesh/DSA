@@ -13,9 +13,9 @@ public class KMPAlgoDemo{
         }
     }
 
-    public static void KMP(String s, int[] lps){
+    private static void KMP(String s, int[] lps){
         int n = s.length();
-
+        
         int i = 1, len = 0;
         while(i < n){
             if(s.charAt(i) == s.charAt(len)){
@@ -25,8 +25,8 @@ public class KMPAlgoDemo{
                 if(len == 0){
                     lps[i++] = 0;
                 }
-
-                while(len > 0 && s.charAt(i) != s.charAt(len)){
+                    
+                else{
                     len = lps[len-1];
                 }
             }
