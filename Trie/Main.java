@@ -18,5 +18,10 @@ public class Main{
         for (String word : prefixToSearch) {
             System.out.println(root.isPrefix(root, word));
         }
+        
+        TrieNode r1 = root.remove(root, "abc", 0);
+        TrieNode r2 = root.remove(root, "ant", 0);
+
+        System.out.println(r1 + " " + r2);
     }
 }

@@ -1,5 +1,5 @@
 public class TrieNode {
-    private TrieNode[] children;
+    TrieNode[] children;
     private boolean isEndOfWord;
 
     public TrieNode() {
@@ -39,6 +39,7 @@ public class TrieNode {
 
         return curr.isEndOfWord;
     }
+
     // prefix searching
     public boolean isPrefix(TrieNode root, String key) {
         TrieNode curr = root;
@@ -52,5 +53,37 @@ public class TrieNode {
             curr = curr.children[ch - 'a'];
         }
         return true;
+    }
+
+    // Return true if root has no childre
+    public boolean isEmpty(TrieNode root) {
+        for (int i = 0; i < 26; i++) {
+            if (root.children[i] != null)
+                return false;
+        }
+        return true;
+    }
+
+    // deleting a key from the trie
+    public TrieNode remove(TrieNode root, String key, int depth) {
+        if (root == null)
+            return null;
+
+        if (depth == key.length()) {
+            root.isEndOfWord = false;
+
+            if (isEmpty(root))
+                root = null;
+
+            return root;
+        }
+
+        int idx = key.charAt(depth) - 'a';
+        root.children[idx] = remove(root.children[idx], key, depth + 1);
+
+        if (isEmpty(root) && root.isEndOfWord) {
+            root = null;
+        }
+        return root;
     }
 }
