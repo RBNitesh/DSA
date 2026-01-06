@@ -23,5 +23,7 @@ public class Main{
         TrieNode r2 = root.remove(root, "ant", 0);
 
         System.out.println(r1 + " " + r2);
+
+        root.printWords(root);
     }
 }

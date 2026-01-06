@@ -1,9 +1,10 @@
+import java.util.*;
 public class TrieNode {
-    TrieNode[] children;
+    Map<Character, TrieNode> children;
     private boolean isEndOfWord;
 
     public TrieNode() {
-        children = new TrieNode[26];
+        children = new HashMap<>();
         isEndOfWord = false;
     }
 
@@ -11,16 +12,11 @@ public class TrieNode {
     public void insert(TrieNode root, String key) {
         TrieNode curr = root;
 
-        for (int i = 0; i < key.length(); i++) {
-            char ch = key.charAt(i);
-
-            if (curr.children[ch - 'a'] == null) {
-                TrieNode newNode = new TrieNode();
-                curr.children[ch - 'a'] = new TrieNode();
-            }
-
-            curr = curr.children[ch - 'a'];
+        for (char ch : key.toCharArray()) {
+            curr.children.putIfAbsent(ch, new TrieNode());
+            curr = curr.children.get(ch);
         }
+        
         curr.isEndOfWord = true;
     }
 
@@ -28,13 +24,10 @@ public class TrieNode {
     public boolean search(TrieNode root, String key) {
         TrieNode curr = root;
 
-        for (int i = 0; i < key.length(); i++) {
-            char ch = key.charAt(i);
-
-            if (curr.children[ch - 'a'] == null)
+        for (char ch : key.toCharArray()) {
+            if (!curr.children.containsKey(ch))
                 return false;
-
-            curr = curr.children[ch - 'a'];
+            curr = curr.children.get(ch);
         }
 
         return curr.isEndOfWord;
@@ -44,24 +37,18 @@ public class TrieNode {
     public boolean isPrefix(TrieNode root, String key) {
         TrieNode curr = root;
 
-        for (int i = 0; i < key.length(); i++) {
-            char ch = key.charAt(i);
-
-            if (curr.children[ch - 'a'] == null)
+        for (char ch : key.toCharArray()) {
+            if (!curr.children.containsKey(ch))
                 return false;
-
-            curr = curr.children[ch - 'a'];
+            curr = curr.children.get(ch);
         }
+
         return true;
     }
 
     // Return true if root has no childre
     public boolean isEmpty(TrieNode root) {
-        for (int i = 0; i < 26; i++) {
-            if (root.children[i] != null)
-                return false;
-        }
-        return true;
+        return root.children.size() == 0;
     }
 
     // deleting a key from the trie
@@ -70,20 +57,55 @@ public class TrieNode {
             return null;
 
         if (depth == key.length()) {
-            root.isEndOfWord = false;
+            if (root.isEndOfWord)
+                root.isEndOfWord = false;
 
+            // if node has no other children it can be deleted.
             if (isEmpty(root))
                 root = null;
 
             return root;
         }
 
-        int idx = key.charAt(depth) - 'a';
-        root.children[idx] = remove(root.children[idx], key, depth + 1);
+        char ch = key.charAt(depth);
+        TrieNode updatedChild = remove(root.children.get(ch), key, depth + 1);
+        
+        // if updated child after deleting the key is null, remove the entry for the key.
+        if (updatedChild == null) {
+            root.children.remove(ch);
+        }
+        else {
+            root.children.put(ch, updatedChild);
+        }
 
-        if (isEmpty(root) && root.isEndOfWord) {
+        // if this node is not the end of another word and has no children, delete it too.
+        if (isEmpty(root) && !root.isEndOfWord) {
             root = null;
         }
         return root;
+    }
+
+    // print the words in trie
+    public void printWords(TrieNode root) {
+        List<String> words = new ArrayList<>();
+        storeWords(root, new StringBuilder(), words);
+        System.out.println(words);
+    }
+
+    // helper function to print the words
+    public void storeWords(TrieNode root, StringBuilder sb, List<String> words) {
+        if (root == null)
+            return;
+
+        if (root.isEndOfWord)
+            words.add(sb.toString());
+
+        for (Map.Entry<Character, TrieNode> child : root.children.entrySet()) {
+            sb.append(child.getKey());
+            TrieNode nextNode = child.getValue();
+            storeWords(nextNode, sb, words);
+            // backtracking
+            sb.deleteCharAt(sb.length() - 1);
+        }
     }
 }
