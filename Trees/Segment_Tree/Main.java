@@ -19,6 +19,7 @@ class SegmentTree {
         sgt[i] = sgt[2 * i + 1] + sgt[2 * i + 2];
     }
 
+    // point update query
     void update(int index, int val, int l, int r, int i, int[] arr, int[] sgt) {
         if (l == r && l == index) {
             sgt[i] = val;
@@ -29,56 +30,104 @@ class SegmentTree {
 
         if (index <= mid) {
             update(index, val, l, mid, 2 * i + 1, arr, sgt);
-        }
-        else {
+        } else {
             update(index, val, mid + 1, r, 2 * i + 2, arr, sgt);
+        }
+
+        sgt[i] = sgt[2 * i + 1] + sgt[2 * i + 2];
+    }
+
+    // lazy-propagation
+    // range update query
+    public void rangeUpdate(int st, int end, int val, int l, int r, int i, int[] sgt, int[] lazy) {
+        // out of range
+        if (end < l || st > r) 
+            return;
+
+        if (lazy[i] != 0) {
+            sgt[i] += (r - l + 1) * lazy[i];
+            if (l != r) {
+                lazy[2 * i + 1] += lazy[i];
+                lazy[2 * i + 2] += lazy[i];
+            }
+            lazy[i] = 0;
+        }
+
+        if (st <= l && end >= r) {
+            sgt[i] += (r - l + 1) * val;
+
+            if (l != r) {
+                lazy[2*i+1] += val;
+                lazy[2 * i + 2] += val;
+            }
+            return;
+        }
+
+        int mid = (l + r) >> 1;
+
+        if (st <= mid) {
+            rangeUpdate(st, Math.min(end, mid), val, l, mid, 2 * i + 1, sgt, lazy);
+        }
+        if (end > mid) {
+            rangeUpdate(Math.max(st, mid + 1), end, val, mid + 1, r, 2 * i + 2, sgt, lazy);
         }
         
         sgt[i] = sgt[2 * i + 1] + sgt[2 * i + 2];
+        System.out.println("sgt[" + i + "]: " + sgt[i]);
+    }
+
+    // range sum query
+    public static int findSum(int st, int end, int l, int r, int i, int[] arr, int[] sgt) {
+        if (l >= st && r <= end) {
+            return sgt[i];
+        }
+        int mid = (l + r) >> 1;
+        int sum = 0;
+
+        if (st <= mid) {
+            sum += findSum(st, Math.min(end, mid), l, mid, 2 * i + 1, arr, sgt);
+        }
+        if (end > mid) {
+            sum += findSum(Math.max(st, mid + 1), end, mid + 1, r, 2 * i + 2, arr, sgt);
+        }
+
+        return sum;
     }
 }
 
+
 public class Main{
     public static void main(String[] args) {
-        int[] arr = { 1, 2, 3, 4, 5, 6, 7 };
+        int[] arr = { 1, 2, 3, 4};
 
         SegmentTree obj = new SegmentTree();
-        int[] sgt = new int[2 * arr.length];
+        int[] sgt = new int[4 * arr.length];
         obj.buildTree(0, 0, arr.length - 1, arr, sgt);
 
-        // for (int sum : sgt) {
-        // System.out.print(sum + " ");
-        // }
+        for (int sum : sgt) {
+        System.out.print(sum + " ");
+        }
 
         System.out.println("Initially: ");
-        System.out.println(findSum(2, 3, 0, arr.length - 1, 0, arr, sgt));
-        System.out.println(findSum(1, 5, 0, arr.length - 1, 0, arr, sgt));
+        System.out.println(obj.findSum(2, 3, 0, arr.length - 1, 0, arr, sgt));
+        System.out.println(obj.findSum(1, 2, 0, arr.length - 1, 0, arr, sgt));
 
-        System.out.println("After updating the value with their square");
-        for (int i = 0; i < arr.length; i++) {
-            obj.update(i, arr[i] * arr[i], 0, arr.length-1, 0, arr, sgt);
-        }
+        // System.out.println("After updating the value with their square");
+        // for (int i = 0; i < arr.length; i++) {
+            // obj.update(i, arr[i] * arr[i], 0, arr.length-1, 0, arr, sgt);
+        // }
 
-        System.out.println(findSum(2, 3, 0, arr.length - 1, 0, arr, sgt));
-        System.out.println(findSum(1, 5, 0, arr.length - 1, 0, arr, sgt));
-    }
-    
-    public static int findSum(int l1, int r1, int l2, int r2, int i, int[] arr, int[] sgt) {
-        if (l1 == l2 && r1 == r2) {
-            return sgt[i];
-        }
+        // System.out.println(obj.findSum(2, 3, 0, arr.length - 1, 0, arr, sgt));
+        // System.out.println(obj.findSum(1, 2, 0, arr.length - 1, 0, arr, sgt));
 
-        int mid = (l2 + r2) >> 1;
 
-        int sum = 0;
+        // range update query
+        int[] lazy = new int[4*arr.length];
+        obj.rangeUpdate(2, 3, 3, 0, arr.length - 1, 0, sgt, lazy);
+        obj.rangeUpdate(3, 3, 1, 0, arr.length - 1, 0, sgt, lazy);
         
-        if (l1 <= mid) {
-            sum += findSum(l1, Math.min(r1, mid), l2, mid, 2 * i + 1, arr, sgt);
-        }
-        if (r1 > mid) {
-            sum += findSum(Math.max(l1, mid + 1), r1, mid + 1, r2, 2 * i + 2, arr, sgt);
-        }
-        
-        return sum;
+        System.out.println("After range upadate query: ");
+        System.out.println(obj.findSum(2, 3, 0, arr.length - 1, 0, arr, sgt));
+        // System.out.println(obj.findSum(1, 2, 0, arr.length - 1, 0, arr, sgt));
     }
 }
