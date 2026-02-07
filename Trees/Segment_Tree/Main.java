@@ -10,11 +10,29 @@ class SegmentTree {
             sgt[i] = arr[r];
             return;
         }
-         
+
         int mid = (l + r) >> 1;
-        
+
         buildTree(2 * i + 1, l, mid, arr, sgt);
         buildTree(2 * i + 2, mid + 1, r, arr, sgt);
+
+        sgt[i] = sgt[2 * i + 1] + sgt[2 * i + 2];
+    }
+
+    void update(int index, int val, int l, int r, int i, int[] arr, int[] sgt) {
+        if (l == r && l == index) {
+            sgt[i] = val;
+            return;
+        }
+
+        int mid = (l + r) >> 1;
+
+        if (index <= mid) {
+            update(index, val, l, mid, 2 * i + 1, arr, sgt);
+        }
+        else {
+            update(index, val, mid + 1, r, 2 * i + 2, arr, sgt);
+        }
         
         sgt[i] = sgt[2 * i + 1] + sgt[2 * i + 2];
     }
@@ -29,9 +47,18 @@ public class Main{
         obj.buildTree(0, 0, arr.length - 1, arr, sgt);
 
         // for (int sum : sgt) {
-            // System.out.print(sum + " ");
+        // System.out.print(sum + " ");
         // }
- 
+
+        System.out.println("Initially: ");
+        System.out.println(findSum(2, 3, 0, arr.length - 1, 0, arr, sgt));
+        System.out.println(findSum(1, 5, 0, arr.length - 1, 0, arr, sgt));
+
+        System.out.println("After updating the value with their square");
+        for (int i = 0; i < arr.length; i++) {
+            obj.update(i, arr[i] * arr[i], 0, arr.length-1, 0, arr, sgt);
+        }
+
         System.out.println(findSum(2, 3, 0, arr.length - 1, 0, arr, sgt));
         System.out.println(findSum(1, 5, 0, arr.length - 1, 0, arr, sgt));
     }
