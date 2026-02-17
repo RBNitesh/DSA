@@ -19,7 +19,7 @@ class Graph {
         int in_degree[] = new int[V];
 
         for (int i = 0; i < V; i++) {
-            ArrayList<Integer> temp = (ArrayList<Integer>) adj[i];
+            List<Integer> temp = adj[i];
             for (int node : temp) {
                 in_degree[node]++;
             }
@@ -34,7 +34,7 @@ class Graph {
         }
 
         int cnt = 0;
-        Vector<Integer> topOrder = new Vector<Integer>();
+        List<Integer> topOrder = new ArrayList<Integer>();
         boolean[] visited = new boolean[V];
 
         while (!q.isEmpty()) {
