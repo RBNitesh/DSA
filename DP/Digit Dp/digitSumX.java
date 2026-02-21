@@ -17,7 +17,7 @@ public class digitSumX{
         int ub = tight == 1? (num.charAt(num.length() - n) - '0') : 9;
 
         for(int dig = 0; dig <= ub; dig++){
-            ans = (ans + solve(n-1, num, x-dig, tight * ((ub == tight)? 1 : 0))) % MOD;
+            ans = (ans + solve(n-1, num, x-dig, tight & ((ub == tight)? 1 : 0))) % MOD;
         }
 
         return dp[n][x][tight] = ans;
