@@ -11,7 +11,7 @@ class SegmentTree {
             return;
         }
 
-        int mid = (l + r) >> 1;
+        int mid = l + (r - l) / 2;
 
         buildTree(2 * i + 1, l, mid, arr, sgt);
         buildTree(2 * i + 2, mid + 1, r, arr, sgt);
@@ -26,7 +26,7 @@ class SegmentTree {
             return;
         }
 
-        int mid = (l + r) >> 1;
+        int mid = l + (r - l) / 2;
 
         if (index <= mid) {
             update(index, val, l, mid, 2 * i + 1, sgt);
@@ -40,7 +40,7 @@ class SegmentTree {
     // lazy-propagation
     // range update query
     public void rangeUpdate(int st, int end, int val, int l, int r, int i, int[] sgt, int[] lazy) {
-        if (end < l || st > r)
+        if (end < l || st > r || l > r)
             return;
 
         if (lazy[i] != 0) {
@@ -81,7 +81,7 @@ class SegmentTree {
         if (l >= st && r <= end) {
             return sgt[i];
         }
-        int mid = (l + r) >> 1;
+        int mid = l + (r - l) / 2;
         int sum = 0;
 
         if (st <= mid) {
