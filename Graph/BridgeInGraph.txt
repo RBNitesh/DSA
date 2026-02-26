@@ -1,0 +1,54 @@
+class Solution {
+  static int[] tin;
+  static int[] low;
+  static boolean[] vis;
+  static List<List<Integer>> bridges;
+
+  public static void dfs(int node, int parent, int timer, ArrayList<Integer>[] adj) {
+    vis[node] = true;
+
+    tin[node] = timer; // time of insertion
+    low[node] = timer; // lowest time of insertion reachable from the node
+
+    for (int next : adj[node]) {
+      if (next == parent)
+        continue;
+      
+      if (!vis[next]) {
+        dfs(next, node, timer + 1, adj);
+        low[node] = Math.min(low[node], low[next]);
+
+        if (tin[node] < low[next]) {
+          bridges.add(new ArrayList<>(Arrays.asList(node, next)));
+        }
+      } else {
+        // lowest time of insertion reachable by the node 
+        low[node] = Math.min(low[node], low[next]);
+      }
+    }
+  }
+
+  public static void createGraph(int n, ArrayList<Integer>[] adj, List<List<Integer>> connections) {
+    for (List<Integer> edge : connections) {
+      int u = edge.get(0);
+      int v = edge.get(1);
+      adj[u].add(v);
+      adj[v].add(u);
+    }
+  }
+  
+  public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+    ArrayList<Integer>[] adj = new ArrayList[n];
+    for(int i = 0; i < n; i++) 
+      adj[i] = new ArrayList<>();
+    createGraph(n, adj, connections);
+
+    tin = new int[n]; // time of insertion
+    low = new int[n]; // lowest time of insertion reachable from the node
+    vis = new boolean[n]; // marks visited nodes
+    bridges = new ArrayList<>();
+
+    dfs(0, -1, 0, adj);
+    return bridges;
+  }
+}
