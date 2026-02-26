@@ -1,53 +1,44 @@
 package Sorting;
 
+import java.util.Arrays;
+
 public class RadixSort {
-    static void display(int[] arr){
-        for(int val:arr){
-            System.out.print(val+" ");
-        }
-        System.out.println();
-    }
-    
-    static int findMax(int[] arr){
-        int max=arr[0];
-        for(int i=0; i<arr.length; i++){
-            if(arr[i]>max) max=arr[i];
-        }
-        return max;
-    }
+    static int[] radixSort(int n, int arr[]) {
+        int maxi = 0;
+        for(int it : arr) maxi = Math.max(maxi, it);
 
-    static void CSort(int[] arr, int palace){
+        int[] freq = new int[10];
 
-        int[] freq=new int[10];
-        for(int i=0; i<arr.length; i++){
-            freq[(arr[i]/palace)%10]++;
+        // compare digit by digit each time
+        for (int k = 1; k <= maxi; k *= 10) {
+            // initially frequency for each element is
+            Arrays.fill(freq, 0); 
+
+            for(int it : arr){
+                it /= k;
+                freq[it%10]++;
+            }
+
+            for(int i = 1; i < 10; i++){
+                freq[i] += freq[i-1];
+            }
+
+            int[] newArr = new int[n];
+            for(int i = n-1; i >= 0; i--){
+                int digit = (arr[i]/k)%10;
+                int index = freq[digit]-1;
+                newArr[index] = arr[i];
+                freq[digit]--;
+            }
+            System.arraycopy(newArr, 0, arr, 0, n);
         }
 
-        for(int i=1; i<freq.length; i++){
-            freq[i]+=freq[i-1];
-        }
-        
-        int[] res=new int[arr.length];
-        for(int i=arr.length-1; i>=0; i--){
-        int idx=freq[(arr[i]/palace)%10]-1;
-        res[idx]=arr[i];
-        freq[(arr[i]/palace)%10]--;
-        }
-        for(int i=0; i<arr.length; i++){
-            arr[i]=res[i];
-        }
-    }
-    
-    static void RSort(int[] arr, int n){
-        int max=findMax(arr);
-        for(int palace=1; max/palace>0; palace*=10){
-            CSort(arr, palace);
-        }
+        return arr;
     }
     public static void main(String[] args) {
         int[] arr={2,524,46,7,2,145,3,47};
         
-        RSort(arr,arr.length);
-        display(arr);
+        int[] sortedArr = radixSort(arr.length, arr);
+        Arrays.stream(sortedArr).forEach(ele -> System.out.print(ele +" "));
     }
 }
