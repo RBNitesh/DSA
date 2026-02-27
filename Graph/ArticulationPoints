@@ -1,0 +1,97 @@
+class Solution {
+    static Set<Integer> cuts;
+    static int[] disc;
+    static int[] low;
+    static boolean[] vis;
+    
+    static ArrayList<Integer> articulationPoints(int V, int[][] edges) {
+        @SuppressWarnings("unchecked")
+        ArrayList<Integer>[] adj = new ArrayList[V];
+        for(int i = 0; i < V; i++) adj[i] = new ArrayList<>();
+        
+        for(int[] e : edges){
+            int u = e[0], v = e[1];
+            adj[u].add(v);
+            adj[v].add(u);
+        }
+        
+        // stores articulation points uniquely
+        cuts = new HashSet<>();
+        disc = new int[V];
+        low = new int[V];
+        vis = new boolean[V];
+        
+        int root = -1;
+        for(int i = 0; i < V; i++){
+            if(!vis[i] && adj[i].size() > 0){
+                root = i;
+                dfs(root, -1, 0, adj);
+                // check if root itself an articulation point
+                // if(checkforRoot(root, adj, V)) cuts.add(root);
+            }
+        }
+        
+        if(cuts.size() == 0){
+            return new ArrayList<>(Arrays.asList(-1));
+        }
+        return new ArrayList<>(cuts);
+    }
+    
+    
+    static void dfs(int node, int parent, int time, ArrayList<Integer>[] adj){
+        if(vis[node]) return;
+        vis[node] = true;
+        
+        disc[node] = low[node] = time;
+        
+        int child = 0;
+        
+        for(int neighbor : adj[node]){
+            if(neighbor == parent) continue;
+            
+            if(vis[neighbor]){
+                low[node] = Math.min(low[node], disc[neighbor]);
+            }
+            else{
+                child++;
+                dfs(neighbor, node, time+1, adj);
+                
+                // if there is no way neighbor can reach the node that has lower discovery time than current node
+                // in that case curr node will be an articulation point
+                if(parent != -1 && disc[node] <= low[neighbor]){ 
+                    cuts.add(node);
+                }
+                low[node] = Math.min(low[node], low[neighbor]);
+            }
+        }
+        if(parent == -1 && child > 1) cuts.add(node);
+        // vis[node] = false;
+    }
+    
+    
+    // static boolean checkforRoot(int root, ArrayList<Integer>[] adj, int V){
+    //     boolean[] newVis = new boolean[V];
+        
+    //     newVis[root] = true;
+    //     int node = adj[root].get(0);
+    //     visitAllNeighbor(node, adj, newVis);
+        
+    //     for(int neigh : adj[root]){
+    //         if(!newVis[neigh]){
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+    
+    // static void visitAllNeighbor(int node, ArrayList<Integer>[] adj, boolean[] newVis){
+    //     if(newVis[node]) return;
+    //     newVis[node] = true;
+        
+    //     // System.out.println("Visited neigh: " + node);
+        
+    //     for(int neigh : adj[node]){
+    //         if(!newVis[neigh]) visitAllNeighbor(neigh, adj, newVis);
+    //     }
+    // }
+}
