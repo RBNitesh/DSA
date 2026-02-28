@@ -1,0 +1,7 @@
+Theorem: Wilson's theorem states that a natural number n > 1 is a prime number if and only if the product of all the positive integers less than n is one less than a multiple of n. That is the factorial
+
+(n-1)! == 1 * 2 * 3 ....*(n-1) satisfies
+
+(n-1)! == -1 (mod n)
+
+exactly when n is a prime number. In other words, any integer n > 1 is a prime number if, and only if, (n − 1)! + 1 is divisible by n
