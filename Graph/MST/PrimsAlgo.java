@@ -31,12 +31,13 @@ public class PrimsAlgo {
          }
          for(int i=0;i<edges.length;i++)
          {
-             int u=edges[i][0];
-             int v=edges[i][1];
-             int wt=edges[i][2];
-             adj.get(u).add(new Pair(v,wt));
-             adj.get(v).add(new Pair(u,wt));
+             int u = edges[i][0];
+             int v = edges[i][1];
+             int wt = edges[i][2];
+             adj.get(u).add(new Pair(v, wt));
+             adj.get(v).add(new Pair(u, wt));
          }
+         
          PriorityQueue<Pair> pq = new PriorityQueue<Pair>();
          pq.add(new Pair(0,0));
          int[] vis=new int[V];
@@ -45,12 +46,14 @@ public class PrimsAlgo {
          {
              Pair node=pq.poll();
              int v=node.v;
-             int wt=node.wt;
+             int wt = node.wt;
+             
              if(vis[v]==1) 
              continue;
              
              s+=wt;
-             vis[v]=1;
+             vis[v] = 1;
+             
              for(Pair it:adj.get(v))
              {
                  if(vis[it.v]==0)

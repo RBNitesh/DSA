@@ -1,4 +1,4 @@
-// User function Template for Java
+// GFG Problem: Hamiltonian Path
 class Solution {
     int count;
     
@@ -14,7 +14,7 @@ class Solution {
             adj[v].add(u);
         }
         
-        
+        // Check All Possible Ways
         for(int i=1; i<=n; i++){
             if(adj[i].size() > 0){
                 boolean[] vis = new boolean[n+1];
