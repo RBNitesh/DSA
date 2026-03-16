@@ -1,0 +1,55 @@
+Problem Link: https://leetcode.com/problems/fancy-sequence/
+
+class Fancy {
+    List<Integer> lst;
+    long add, mult, MOD;
+
+    public long exp(long x, long n){
+        if(n == 0) return 1l;
+
+        long half = exp(x, n/2) % MOD;
+
+        half = (half * half) % MOD;
+
+        if(n % 2 != 0){
+            half = (half * x) % MOD;
+        }
+
+        return half;
+    }
+
+    public Fancy() {
+        lst = new ArrayList<>();
+        add = 0l;
+        mult = 1l;
+        MOD = (long) 1e9 + 7;
+    }
+    
+    public void append(int val) {
+        val = (int) (((((long)val - add) % MOD) + MOD) % MOD);
+        // val = val / mult;
+        val = (int) (((long)val * exp(mult, MOD-2)) % MOD);
+
+        lst.add(val);
+    }
+    
+    public void addAll(int inc) {
+        add = (add + inc) % MOD;
+    }
+    
+    public void multAll(int m) {
+        add = (add * m) % MOD;
+        mult = (mult * m) % MOD;
+    }
+    
+    public int getIndex(int idx) {
+        if(idx >= lst.size()) return -1;
+
+        long x = (long)lst.get(idx);
+
+        x = (x * mult) % MOD;
+        x = (x + add) % MOD;
+
+        return (int) x;
+    }
+}
