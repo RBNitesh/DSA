@@ -4,20 +4,6 @@ class Fancy {
     List<Integer> lst;
     long add, mult, MOD;
 
-    public long exp(long x, long n){
-        if(n == 0) return 1l;
-
-        long half = exp(x, n/2) % MOD;
-
-        half = (half * half) % MOD;
-
-        if(n % 2 != 0){
-            half = (half * x) % MOD;
-        }
-
-        return half;
-    }
-
     public Fancy() {
         lst = new ArrayList<>();
         add = 0l;
@@ -51,5 +37,19 @@ class Fancy {
         x = (x + add) % MOD;
 
         return (int) x;
+    }
+
+    public long exp(long x, long n){
+        if(n == 0) return 1l;
+
+        long half = exp(x, n/2) % MOD;
+
+        half = (half * half) % MOD;
+
+        if(n % 2 != 0){
+            half = (half * x) % MOD;
+        }
+
+        return half;
     }
 }

@@ -46,7 +46,7 @@ public class TrieNode {
         return true;
     }
 
-    // Return true if root has no childre
+    // Return true if root has no children
     public boolean isEmpty(TrieNode root) {
         return root.children.size() == 0;
     }
