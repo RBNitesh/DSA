@@ -1,0 +1,53 @@
+class Node{
+  Node[] children;
+
+  public Node() {
+    children = new Node[2];
+  }
+  
+  public void insert(Node root, int n) {
+      Node curr = root;
+      for (int i = 31; i >= 0; i--){
+        int d = n & (1 << i);
+        d = (d == 0) ? 0 : 1;
+        if (curr.children[d] == null) {
+          curr.children[d] = new Node();
+        }
+        curr = curr.children[d];
+      }
+  }
+
+  public int maxXorPair(Node root, int n) {
+      Node curr = root;
+      int ans = 0;
+      for (int i = 31; i >= 0; i--) {
+        int d = n & (1 << i);
+        d = (d == 0) ? 0 : 1;
+        if (curr.children[d^1] != null) {
+          // set the k-th bit
+          ans |= (1 << i);
+          curr = curr.children[d ^ 1];
+        } else {
+          curr = curr.children[d];
+        }
+      }
+      return ans;
+  }
+} 
+
+static int maximumXorSubarray(int[] arr) {
+    int n = arr.length;
+    Node root = new Node();
+
+    int maxXor = 0;
+
+    int xor = 0;
+    root.insert(root, 0);
+    for (int i = 0; i < n; i++) {
+      xor ^= arr[i];
+
+      root.insert(root, xor);
+      maxXor = Math.max(maxXor, root.maxXorPair(root, xor));
+    }
+    return maxXor;
+  }

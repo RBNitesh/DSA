@@ -1,0 +1,49 @@
+Problem: Count total no. of set bits in number from 1 to n 
+
+static long countSetBits(long n) {
+    long ans = 0L;
+    
+    // O(1)
+    for (int i = 1; i <= 62; i++) {
+      ans += (1L << (i-1))* ((n + 1) / (1L << i));
+      long rem = (n + 1) % (1L << i);
+
+      if (rem > (1L << (i-1))) {
+        ans += rem - (1L << (i-1));
+      }
+    }
+    return ans;
+
+    /*
+      // Digit Dp Solution
+      String num = Long.toBinaryString(n);
+      int len = num.length();
+    
+      long[][][] dp = new long[num.length()][num.length() + 1][2];
+      for(long[][] dpi : dp)
+        for(long[] dpij : dpi)
+          Arrays.fill(dpij, -1L);
+    
+      return compute(0, 1, 0, num, dp);
+    */
+  }
+
+  // static long compute(int i, int tight, int cntBit, String num, long[][][] dp) {
+  //   if (i == num.length())
+  //     return 1L*cntBit;
+
+  //   if (dp[i][cntBit][tight] != -1L) {
+  //     return dp[i][cntBit][tight];
+  //   }
+
+  //   int d = num.charAt(i)-'0';
+  //   long cnt = 0l;
+
+  //   cnt += compute(i + 1, (tight == 1 && d == 0) ? 1 : 0, cntBit, num, dp);
+
+  //   if (tight == 0 || d == 1) {
+  //     cnt += compute(i + 1, tight, cntBit + 1,num, dp);
+  //   }
+
+  //   return dp[i][cntBit][tight] = cnt;
+  // }

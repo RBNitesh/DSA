@@ -1,0 +1,121 @@
+Problem: Maximum Subarray Xor With Bound
+Link: https://leetcode.com/problems/maximum-subarray-xor-with-bounded-range/description/
+
+class Node{
+  Node[] children;
+  int freq;
+
+  public Node() {
+    this.children = new Node[2];
+    this.freq = 0;
+  }
+
+  public void insert(Node root, int n) {
+    Node curr = root;
+    curr.freq++;
+    for (int i = 15; i >= 0; i--) {
+      int d = n & (1 << i);
+      d = (d == 0) ? 0 : 1;
+      if (curr.children[d] == null) {
+        curr.children[d] = new Node();
+      }
+      curr = curr.children[d];
+      curr.freq++;
+    }
+  }
+  
+  public void remove(Node root, int n) {
+    Node curr = root;
+    List<Node> path = new ArrayList<>();
+    path.add(curr);
+    for (int i = 15; i >= 0; i--) {
+      int d = n & (1 << i);
+      d = (d == 0) ? 0 : 1;
+      if (curr.children[d] == null)
+        return;
+      if (curr.children[d].freq == 0)
+        return;
+      curr = curr.children[d];
+      path.add(curr);
+    }
+    for (Node node : path) {
+      node.freq--;
+    }
+  }
+
+  public int maxXorPair(Node root, int n) {
+      Node curr = root;
+      int ans = 0;
+      for (int i = 15; i >= 0; i--) {
+        int d = n & (1 << i);
+        d = (d == 0) ? 0 : 1;
+        if (curr.children[d^1] != null && curr.children[d^1].freq > 0) {
+          // set the k-th bit
+          ans |= (1 << i);
+          curr = curr.children[d ^ 1];
+        } else {
+          curr = curr.children[d];
+        }
+      }
+      return ans;
+  }
+}
+
+class Solution {
+    public int maxXor(int[] nums, int k) {
+        int n = nums.length;
+        int ans = 0;
+
+        Node root = new Node();
+
+        // precomputation
+        int[] preXor = new int[n+1];
+        for(int i = 0; i < n; i++){
+            preXor[i+1] = preXor[i] ^ nums[i]; 
+        }
+        
+        Deque<Integer> minD = new ArrayDeque<>();
+        Deque<Integer> maxD = new ArrayDeque<>();
+
+        int i = 0, j = 0;
+        
+        root.insert(root, preXor[0]); // Zero is the xor of subarr ending at -1 index
+
+        for (; j < n; j++) {
+          while (!minD.isEmpty() && nums[minD.peekLast()] >= nums[j]) {
+            minD.pollLast();
+          }
+          minD.addLast(j);
+
+          while (!maxD.isEmpty() && nums[maxD.peekLast()] <= nums[j]) {
+            maxD.pollLast();
+          }
+          maxD.addLast(j);
+
+          while (!maxD.isEmpty() && !minD.isEmpty() && 
+                nums[maxD.peekFirst()] - nums[minD.peekFirst()] > k) {
+
+            if (minD.peekFirst() == i)
+              minD.pollFirst();
+            if (maxD.peekFirst() == i)
+              maxD.pollFirst();
+
+            root.remove(root, preXor[i]);
+            i++;
+          }
+
+          root.insert(root, preXor[j+1]);
+
+        //   Node root = new Node();
+        //   root.insert(root, 0);
+        //   int xor = 0;
+        //   for(int idx = i; idx <= j; idx++){
+        //     xor ^= nums[idx];
+        //     root.insert(root, xor);
+        //   }
+
+          ans = Math.max(ans, root.maxXorPair(root, preXor[j+1]));
+        }
+        return ans;
+    }
+}
