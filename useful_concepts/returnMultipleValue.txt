@@ -1,0 +1,46 @@
+Problem: Find Maximum Non-Negative Product in a Matrix
+Link: https://leetcode.com/problems/maximum-non-negative-product-in-a-matrix/?envType=daily-question&envId=2026-03-23
+
+class MinMax{
+    long min, max;
+    public MinMax(long min, long max){
+        this.min = min;
+        this.max = max;
+    }
+}
+
+class Solution {
+    public MinMax compute(int i, int j, int[][] grid){
+        if(i == grid.length-1 && j == grid[0].length-1){
+            return new MinMax(1L*grid[i][j], 1L*grid[i][j]);
+        }
+
+        if(dp[i][j] != null) 
+            return dp[i][j];
+
+        MinMax ans = new MinMax(Long.MAX_VALUE, Long.MIN_VALUE);
+
+        if(i+1 < grid.length){
+            MinMax down = compute(i+1, j, grid);
+            ans.min = Math.min(ans.min, down.min);
+            ans.max = Math.max(ans.max, down.max);
+        }
+
+        if(j+1 < grid[0].length){
+            MinMax right = compute(i, j+1, grid);
+            ans.min = Math.min(ans.min, right.min);
+            ans.max = Math.max(ans.max, right.max);
+        }
+        // In case curr ele (grid[i][j]) is negative, ans.max ans ans.min would respectively become
+        // minimum and maximum after multiplying with negative number
+        return  dp[i][j] = (grid[i][j] >= 0? new MinMax(ans.min*grid[i][j], ans.max*grid[i][j]) : 
+                                new MinMax(ans.max*grid[i][j], ans.min*grid[i][j]));
+    }
+
+    MinMax[][] dp;
+    public int maxProductPath(int[][] grid) {
+        dp = new MinMax[grid.length][grid[0].length];
+
+        return (int) (Math.max(-1L, compute(0, 0, grid).max) % 1_000_000_007L);
+    }
+}
