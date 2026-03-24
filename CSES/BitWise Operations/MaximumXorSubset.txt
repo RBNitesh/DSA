@@ -1,0 +1,51 @@
+/*
+
+    1. Find the maximum element among all whose i-th bit is set
+    2. Swap the maximum ele with the ele at index in arr
+    3. Run a loop over arr and replace the ele at j with arr[j] ^ maxEle if i-th bit of ele is set.
+
+*/
+
+
+static int maximumXorOfSubset(int[] arr) {
+    int n = arr.length;
+    int max_xor = 0;
+    int index = 0;
+
+    for (int pos = 31; pos >= 0; pos--) {
+      int maxIndex = -1;
+
+      for (int i = index; i < n; i++) {
+        if ((arr[i] & (1 << pos)) != 0 && (maxIndex == -1 || arr[i] > arr[maxIndex])) {
+          maxIndex = i;
+        }
+      }
+
+      if (maxIndex == -1)
+        continue;
+
+      swap(arr, index, maxIndex);
+      maxIndex = index;
+
+      for (int i = 0; i < n; i++) {
+        if (i != maxIndex && (arr[i] & (1 << pos)) != 0) {
+          arr[i] ^= arr[maxIndex];
+        }
+      }
+      index++;
+    }
+
+    int res = 0;
+    for (int i = 0; i < n; i++) {
+      res ^= arr[i];
+    }
+    return res;
+  }
+
+  static void swap(int[] arr, int i, int j) {
+    if (i == j)
+      return;
+    arr[i] = arr[i] ^ arr[j];
+    arr[j] = arr[i] ^ arr[j];
+    arr[i] = arr[i] ^ arr[j];
+  }

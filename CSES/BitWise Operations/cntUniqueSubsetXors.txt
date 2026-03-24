@@ -1,0 +1,24 @@
+static int cntUniqueSubsetXors(int[] arr) {
+    int n = arr.length;
+
+    int[] basis = new int[32];
+    Arrays.fill(basis, -1);
+    int basisSize = 0;
+
+    for (int i = 0; i < n; i++) {
+      int x = arr[i];
+
+      for (int pos = 31; pos >= 0; pos--) {
+        if ((x & (1 << pos)) != 0) {
+          if (basis[pos] == -1) {
+            basis[pos] = x;
+            basisSize++;
+            break;
+          } else {
+            x ^= basis[pos];
+          }
+        }
+      }
+    }
+    return 1 << basisSize;
+  }
