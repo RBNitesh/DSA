@@ -1,0 +1,253 @@
+import java.util.*;
+import java.io.*;
+ 
+public class Main {
+  static void print(Object x) {
+    System.out.println(x);
+  }
+  
+  static long gcd(long a, long b) {
+    return b == 0 ? a : gcd(b, a % b);
+  }
+ 
+  static long lcm(long a, long b) {
+    return (a / gcd(a, b)) * b;
+  }
+ 
+  static long modPow(long base, long exp, long mod) {
+    long res = 1;
+    base %= mod;
+    while (exp > 0) {
+      if ((exp & 1) == 1)
+        res = (res * base) % mod;
+      base = (base * base) % mod;
+      exp >>= 1;
+    }
+    return res;
+  }
+ 
+  static class FastReader {
+    final private int BUFFER_SIZE = 1 << 16;
+    private DataInputStream din;
+    private byte[] buffer;
+    private int bufferPointer, bytesRead;
+ 
+    public FastReader() {
+      din = new DataInputStream(System.in);
+      buffer = new byte[BUFFER_SIZE];
+      bufferPointer = bytesRead = 0;
+    }
+ 
+    public String readLine() throws IOException {
+      byte[] buf = new byte[64]; // Line length
+      int cnt = 0, c;
+      while ((c = read()) != -1) {
+        if (c == '\n') {
+          if (cnt != 0)
+            break;
+          else
+            continue;
+        }
+        buf[cnt++] = (byte) c;
+      }
+      return new String(buf, 0, cnt);
+    }
+ 
+    public String next() throws IOException {
+      byte c = read();
+ 
+      // 1. Skip all leading whitespace (spaces, tabs, newlines)
+      while (c <= ' ') {
+        if (c == -1)
+          return ""; // Handle End of File (EOF)
+        c = read();
+      }
+ 
+      // 2. Build the string token efficiently
+      StringBuilder res = new StringBuilder();
+      while (c > ' ') {
+        res.append((char) c);
+        c = read();
+      }
+ 
+      return res.toString();
+    }
+ 
+    public String nextLine() throws IOException {
+      byte c = read();
+      if (c == -1)
+        return ""; // Handle End of File (EOF)
+ 
+      StringBuilder res = new StringBuilder();
+ 
+      // 1. Read everything until a line break or EOF
+      while (c != '\n' && c != '\r' && c != -1) {
+        res.append((char) c);
+        c = read();
+      }
+ 
+      // 2. Handle Windows CRLF (\r\n) edge case safely
+      if (c == '\r') {
+        c = read();
+        if (c != '\n' && c != -1) {
+          // Push the byte back into the buffer if it's not a newline
+          bufferPointer--;
+        }
+      }
+ 
+      return res.toString();
+    }
+ 
+    public int nextInt() throws IOException {
+      int ret = 0;
+      byte c = read();
+      while (c <= ' ')
+        c = read();
+      boolean neg = (c == '-');
+      if (neg)
+        c = read();
+      do {
+        ret = ret * 10 + c - '0';
+      } while ((c = read()) >= '0' && c <= '9');
+      if (neg)
+        return -ret;
+      return ret;
+    }
+ 
+    public long nextLong() throws IOException {
+      long ret = 0;
+      byte c = read();
+      while (c <= ' ')
+        c = read();
+      boolean neg = (c == '-');
+      if (neg)
+        c = read();
+      do {
+        ret = ret * 10 + c - '0';
+      } while ((c = read()) >= '0' && c <= '9');
+      if (neg)
+        return -ret;
+      return ret;
+    }
+ 
+    public double nextDouble() throws IOException {
+      double ret = 0, div = 1;
+      byte c = read();
+      while (c <= ' ')
+        c = read();
+      boolean neg = (c == '-');
+      if (neg)
+        c = read();
+      do {
+        ret = ret * 10 + c - '0';
+      } while ((c = read()) >= '0' && c <= '9');
+      if (c == '.') {
+        while ((c = read()) >= '0' && c <= '9') {
+          ret += (c - '0') / (div *= 10);
+        }
+      }
+      if (neg)
+        return -ret;
+      return ret;
+    }
+ 
+    private void fillBuffer() throws IOException {
+      bytesRead = din.read(buffer, bufferPointer = 0, BUFFER_SIZE);
+      if (bytesRead == -1)
+        buffer[0] = -1;
+    }
+ 
+    private byte read() throws IOException {
+      if (bufferPointer == bytesRead)
+        fillBuffer();
+      return buffer[bufferPointer++];
+    }
+ 
+    public void close() throws IOException {
+      if (din == null)
+        return;
+      din.close();
+    }
+  }
+ 
+  static final long MOD = 1_000_000_007L;
+  static final int INF = (int) 1e9;
+ 
+  public static void main(String[] args) throws IOException {
+    FastReader in = new FastReader();
+ 
+    int n = in.nextInt();
+    int k = in.nextInt();
+    int[] arr = new int[n];
+ 
+    for (int i = 0; i < n; i++)
+      arr[i] = in.nextInt();
+ 
+    kSubsetXors(arr, k);
+  }
+ 
+  public static void kSubsetXors(int[] arr, int k) {
+    int n = arr.length;
+ 
+    int[] basis = new int[32];
+    int basisSize = 0;
+ 
+    for (int i = 0; i < n; i++) {
+      int x = arr[i];
+ 
+      for (int pos = 31; pos >= 0; pos--) {
+        if ((x & (1 << pos)) != 0) {
+          if (basis[pos] == 0) {
+            basis[pos] = x;
+            basisSize++;
+            break;
+          } else {
+            x ^= basis[pos];
+          }
+        }
+      }
+    }
+    
+    for (int i = 0; i <= 31; i++) {
+      for (int j = i - 1; j >= 0; j--) {
+        if (basis[i] == 0)
+          continue;
+        if (basis[j] != 0 && (basis[i] & (1 << j)) != 0) {
+          basis[i] ^= basis[j];
+        }
+      }
+    }
+    
+    List<Integer> cleanBasis = new ArrayList<>();
+    for (int b : basis) {
+      if (b != 0)
+        cleanBasis.add(b);
+    }
+ 
+    StringBuilder sb = new StringBuilder();
+    long freq = n - basisSize > 18 ? 1 << 18: 1 << n - basisSize; // freq <= 1e5
+    
+    outer:
+    // generate the subset
+    for (int i = 0; i < (1 << basisSize); i++) {
+      int xor = 0;
+      for (int j = 0; j < basisSize; j++) {
+        if ((i & (1 << j)) != 0) {
+          xor ^= cleanBasis.get(j);
+        }
+      }
+ 
+      for (int c = 0; c < freq; c++) {
+        if (sb.length() > 0)
+          sb.append(" ");
+        sb.append(xor);
+        k--;
+ 
+        if (k == 0)
+          break outer;
+      }
+    }
+    print(sb);
+  }
+}
+ 
