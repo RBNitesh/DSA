@@ -1,0 +1,72 @@
+Problem Link: https://leetcode.com/problems/xor-after-range-multiplication-queries-ii/description/?envType=daily-question&envId=2026-04-09
+
+Time Complexity: O(Q+N) * sqrt(N)
+Space Complexity: O(Q+N) 
+
+class Solution {
+    public long exp(int n, long pow){
+        if(pow == 0) return 1l;
+
+        long half = exp(n, pow >> 1);
+        half = (half * half) % MOD;
+
+        if((pow & 1) != 0)
+            half = (half * n) % MOD;
+
+        return half;
+    }
+
+    long MOD;
+    public int xorAfterQueries(int[] nums, int[][] queries) {
+        MOD = 1_000_000_007l;
+        int n = nums.length;
+        int blockSize = (int) Math.sqrt(n);
+
+        Map<Integer,List<int[]>> jumpsMap = new HashMap<>();
+
+        for(int[] q : queries){
+            int k = q[2];
+
+            if(k >= blockSize){
+                for(int i = q[0]; i <= q[1]; i += k){
+                    nums[i] = (int) ((1l * nums[i] * q[3]) % MOD);
+                }
+                continue;
+            }
+
+            jumpsMap.putIfAbsent(k, new ArrayList<>());
+            jumpsMap.get(k).add(q);
+        }
+
+        long[] diff = new long[n];
+
+        for(int k : jumpsMap.keySet()){
+            Arrays.fill(diff, 1l);
+
+            for(int[] q : jumpsMap.get(k)){
+                int l = q[0], r = q[1], v = q[3];
+
+                diff[l] = (diff[l] * v) % MOD;
+                int outerIdx = r + k - ((r - l) % k);
+                
+                if(outerIdx < n){
+                    diff[outerIdx] = (diff[outerIdx] * exp(v, MOD-2)) % MOD;
+                }
+            }
+
+            for(int i = k; i < n; i++){
+                diff[i] = (diff[i] * diff[i-k]) % MOD;
+            }
+
+            for(int i = 0; i < n; i++){
+                nums[i] = (int) ((diff[i] * nums[i]) % MOD);
+            }
+        }
+
+        int xor = 0;
+        for(int it : nums){
+            xor ^= it;
+        }
+        return xor;
+    }
+}
