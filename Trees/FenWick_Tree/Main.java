@@ -1,61 +1,33 @@
-class FenWickTree{
-    public int[] createBIT(int[] a){
-        int n = a.length;
-        int[] BIT = new int[n+1];
+class Main {
 
-        for(int i=1; i<n+1; ++i){
-            updateBIT(BIT, a[i-1], i);
-        }
-        return BIT;
-    }
-
-    public void updateBIT(int[] BIT, int val, int i){
-        int len = BIT.length;
-
-        while(i < len){
-            BIT[i] += val;
-            i = getNext(i);
-        }
-    }
-
-    public int getSum(int[] BIT, int i){
-        i += 1;
+    static int sum(int i) {
         int sum = 0;
-
-        while(i > 0){
-            sum += BIT[i];
-            i = getParent(i);
+        for (; i >= 1; i -= (i & -i)) {
+            sum += bit[i];
         }
         return sum;
     }
 
-    private int getNext(int i){
-        return i + (i & -i);
+    static void update(int i, int x) {
+        for (; i < N; i += (i & -i)) {
+            bit[i] += x;
+        }
     }
 
-    private int getParent(int i){
-        return i - (i & -i);
-    }
-}
+    static int[] bit;
+    static int N;
+    public static void main(String[] strArr) {
+        int[] arr = { 1, 5, 3, -21, 5, 41, 13 };
 
+        bit = new int[arr.length + 1]; // 1-indexed
+        N = bit.length;
 
-public class Main{
-    public static void main(String[] abc){
-        int[] arr = {2, 3, 5, -1, 5, 3, 7};
-
-        FenWickTree fenweekTree = new FenWickTree();
-        int[] BIT = fenweekTree.createBIT(arr);
-
-        int newVal = -2; // replace arr[1] with newVal
-        fenweekTree.updateBIT(BIT, newVal-arr[1], 2);
-
-        int[] preSum = new int[BIT.length-1];
-        for(int i=0; i<arr.length; ++i){
-            preSum[i] = fenweekTree.getSum(BIT, i);
+        for (int i = 0; i < arr.length; i++) {
+            update(i + 1, arr[i]);
         }
 
-        for(int sum : preSum){
-            System.out.print(sum + " ");
+        for (int i = 1; i < N; i++) {
+            System.out.print(sum(i) + " ");
         }
     }
 }
