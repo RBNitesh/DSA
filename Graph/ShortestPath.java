@@ -2,20 +2,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class ShortestPath {
-    static class Pair implements Comparable<Pair>{
-        int node;
-        int dist;
-
-        public Pair(int node, int dist){
-            this.node = node;
-            this.dist = dist;
-        }
-
-        @Override
-        public int compareTo(Pair p2){
-            return this.dist - p2.dist;
-        }
-    }
+    
 
     static class Edge{
         int src;
@@ -68,42 +55,7 @@ public class ShortestPath {
         System.out.println();
     }
 
-    private static void dijkstra(ArrayList<Edge>[] graph, int src, int V){
-        PriorityQueue<Pair> pq = new PriorityQueue<>();
-
-        int[] dist = new int[V];
-        for(int i=0; i<V; i++){
-            if(i != src){
-                dist[i] = Integer.MAX_VALUE;
-            }
-        }
-
-        boolean[] isVis = new boolean[V];
-        pq.add(new Pair(0, 0));
-
-        while(!pq.isEmpty()){
-            Pair curr = pq.poll();
-            
-            if(!isVis[curr.node]){
-                isVis[curr.node] = true;
-
-                for(int i=0; i<graph[curr.node].size(); i++){
-                    Edge e = graph[curr.node].get(i);
-
-                    int u = e.src, v = e.dest;
-                    if(dist[u]+e.wt < dist[v]){
-                        dist[v] = dist[u]+e.wt;
-                        pq.add(new Pair(v, dist[v])); 
-                    }
-                }
-            }
-        }
-
-        for(int i=0; i<V; i++){
-            System.out.print(dist[i]+ " ");
-        }
-        System.out.println();
-    }
+    
 
     private static void createGraph(ArrayList<Edge>[] graph){
         for(int i=0; i<graph.length; i++){
