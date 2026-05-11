@@ -3,21 +3,6 @@ package ShortestPath.WeightedGraph;
 import java.util.*;
 
 public class DijkstraDemo {
-    static class Pair implements Comparable<Pair> {
-        int node;
-        int dist;
-
-        public Pair(int node, int dist) {
-            this.node = node;
-            this.dist = dist;
-        }
-
-        @Override
-        public int compareTo(Pair p2) {
-            return this.dist - p2.dist;
-        }
-    }
-    
     static public int dijkstra(int src, int dest, int V, ArrayList<int[]>[] adj) {
 
         boolean[] vis = new boolean[V];
@@ -25,15 +10,19 @@ public class DijkstraDemo {
         int[] dist = new int[V];
         Arrays.fill(dist, Integer.MAX_VALUE);
 
-        PriorityQueue<Pair> pq = new PriorityQueue<>();
+        PriorityQueue<int[]> pq = new PriorityQueue<>(
+            (a, b) -> {
+                return a[1] - b[1];
+            }
+        );
 
-        pq.add(new Pair(src, 0));
+        pq.add(new int[]{src, 0});
         dist[src] = 0;
 
         while (!pq.isEmpty()) {
-            Pair curr = pq.poll();
-            int u = curr.node;
-            int du = curr.dist;
+            int[] curr = pq.poll();
+            int u = curr[0];
+            int du = curr[1];
 
             if (u == dest)
                 return du;
@@ -45,7 +34,7 @@ public class DijkstraDemo {
                 int wt = neigh[1];
 
                 if (!vis[v] && du + wt < dist[v]) {
-                    pq.add(new Pair(v, du + wt));
+                    pq.add(new int[] { v, du + wt });
                     dist[v] = du + wt;
                 }
             }
