@@ -2,22 +2,24 @@ package MST;
 import java.util.Arrays;
 import java.util.Comparator;
 
+// O(E*(logE + alpha(V)))
 public class KruskalsAlgo{
     public static int kruskalsMST(int V, int[][] edges) {
         
         // Sort all edges based on weight
-        Arrays.sort(edges, Comparator.comparingInt(e -> e[2]));
+        Arrays.sort(edges, Comparator.comparingInt(e -> e[2])); // E*logE
         
         // Traverse edges in sorted order
         DSU dsu = new DSU(V);
         int cost = 0, count = 0;
         
+        // E*alpha(V) ~ O(E)
         for (int[] e : edges) {
             int x = e[0], y = e[1], w = e[2];
             
             // Make sure that there is no cycle
-            if (dsu.find(x) != dsu.find(y)) {
-                dsu.union(x, y);
+            if (dsu.find(x) != dsu.find(y)) {//O(alpha(V)), for all practical cases alpha(n)<=4
+                dsu.union(x, y); // O(alpha(V))
                 cost += w;
                 if (++count == V - 1) break;
             }

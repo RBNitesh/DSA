@@ -2,6 +2,7 @@ package ShortestPath.UnweightedGraph;
 
 import java.util.*;
 
+// O(V+E)
 public class BFSDemo {
     public static int bfs(int src, int dest, List<Integer>[] adj) {
         boolean[] vis = new boolean[adj.length];
@@ -15,8 +16,10 @@ public class BFSDemo {
 
             for (int k = 1; k <= N; k++) {
                 int curr = q.poll();
+                
                 if (curr == dest)
                     return level;
+
                 for (int next : adj[curr]) {
                     if (!vis[next]) {
                         q.add(next);

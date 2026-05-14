@@ -3,66 +3,58 @@ package MST;
 import java.io.*;
 import java.util.*;
 
-// Class to form pair
-class Pair implements Comparable<Pair>
-{
-    int v;
-    int wt;
-    Pair(int v,int wt)
-    {
-        this.v=v;
-        this.wt=wt;
-    }
-    public int compareTo(Pair that)
-    {
-        return this.wt-that.wt;
-    }
-}
-
+// O(E*logE)
 public class PrimsAlgo {
 
 	// Function of spanning tree
-	static int spanningTree(int V, int E, int edges[][])
-    {
-         ArrayList<ArrayList<Pair>> adj=new ArrayList<>();
-         for(int i=0;i<V;i++)
-         {
-             adj.add(new ArrayList<Pair>());
-         }
-         for(int i=0;i<edges.length;i++)
-         {
-             int u = edges[i][0];
-             int v = edges[i][1];
-             int wt = edges[i][2];
-             adj.get(u).add(new Pair(v, wt));
-             adj.get(v).add(new Pair(u, wt));
-         }
-         
-         PriorityQueue<Pair> pq = new PriorityQueue<Pair>();
-         pq.add(new Pair(0,0));
-         int[] vis=new int[V];
-         int s=0;
-         while(!pq.isEmpty())
-         {
-             Pair node=pq.poll();
-             int v=node.v;
-             int wt = node.wt;
-             
-             if(vis[v]==1) 
-             continue;
-             
-             s+=wt;
-             vis[v] = 1;
-             
-             for(Pair it:adj.get(v))
-             {
-                 if(vis[it.v]==0)
-                 {
-                     pq.add(new Pair(it.v,it.wt));
-                 }
-             }
-         }
-         return s;
+	static int spanningTree(int V, int E, int edges[][]){
+        ArrayList<int[]>[] adj = new ArrayList[V];
+        // O(V)
+        for (int i = 0; i < V; i++) {
+            adj[i] = new ArrayList<>();
+        }
+        
+        // O(E)
+        for(int i=0;i<edges.length;i++){
+            int u = edges[i][0], v = edges[i][1];
+            int w = edges[i][2];
+
+            adj[u].add(new int[] { v, w });
+            adj[v].add(new int[] { u, w });
+        }
+        
+        PriorityQueue<int[]> pq = new PriorityQueue<>(
+            (a, b) -> {
+                return a[1] - b[1];
+            }
+        );
+
+        pq.add(new int[]{0, 0});
+        boolean[] vis = new boolean[V];
+    
+        int cost = 0;
+        // E*logE
+        while(!pq.isEmpty()){
+            int[] curr = pq.poll(); // O(logE)
+            // in dijkstra, curr[1]: Minimum distance to reach curr node from source node.
+            // curr[1]: weight of curr edge
+            int u = curr[0], uw = curr[1];
+            
+            if(vis[u]) 
+            continue;
+            
+            cost += uw;
+            vis[u] = true;
+            
+            for (int[] neigh : adj[u]) {
+                int v = neigh[0];
+
+                if (!vis[v])
+                    // in dijkstra we not add {v, du + vw}. But, in prims algo {v, vw}.
+                    pq.add(neigh); // O(log(E)
+            }
+        }
+        return cost;
     }
     
     // Driver code

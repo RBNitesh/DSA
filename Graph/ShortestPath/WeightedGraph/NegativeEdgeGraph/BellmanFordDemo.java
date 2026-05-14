@@ -12,17 +12,17 @@ public class BellmanFordDemo {
 
         // relaxing the each edge V-1 times
         for (int k = 0; k < V; k++) {
-            for (int i = 0; i < V; i++) {
-                for (int[] e : adj[i]) {
+            for (int u = 0; u < V; u++) {
+                for (int[] e : adj[u]) {
                     int v = e[0], wt = e[1];
 
-                    if (dist[i] != Integer.MAX_VALUE && dist[i] + wt < dist[v]) {
+                    if (dist[u] != Integer.MAX_VALUE && dist[u] + wt < dist[v]) {
                         if(k == V-1){ // negative edge cycle detected
                             System.out.println("Negative weight cycle is detected!");
                             return;
                         }
 
-                        dist[v] = dist[i] + wt;
+                        dist[v] = dist[u] + wt;
                     }
                 }
             }

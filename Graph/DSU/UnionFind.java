@@ -1,3 +1,4 @@
+package DSU;
 import java.util.*;
 
 public class UnionFind{

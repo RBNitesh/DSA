@@ -1,0 +1,10 @@
+Usecase of Prims:
+1. Graph is dense
+2. Adjacency list is given
+3. Connected Graph (need to restart per component for disconnected graph)
+
+
+Usecase of Kruskals:
+1. Sparse Graph (E ~ V)
+2. Edgelist is given
+3. Graph is Disconnected (Kruskals naturally handles multiple components)

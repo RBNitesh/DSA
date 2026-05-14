@@ -13,6 +13,8 @@ public class DSU {
         }
     }
 
+    // O(alpha(n)) because of path compression, otherwise O(logn)
+    // for all practical case  alpha(n) <= 4
     public int find(int i) {
         if (parent[i] != i) {
             parent[i] = find(parent[i]);
@@ -20,9 +22,10 @@ public class DSU {
         return parent[i];
     }
 
+    // O(alpha(n))
     public void union(int x, int y) {
-        int s1 = find(x);
-        int s2 = find(y);
+        int s1 = find(x); // alpha(n)
+        int s2 = find(y); // alpha(n)
         if (s1 != s2) {
             if (rank[s1] < rank[s2]) {
                 parent[s1] = s2;

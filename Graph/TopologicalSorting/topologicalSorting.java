@@ -1,5 +1,7 @@
 package TopologicalSorting;
+
 import java.util.*;
+
 // Class to represent a graph
 class Graph {
     int V;
@@ -16,12 +18,15 @@ class Graph {
         adj[u].add(v);
     }
 
+    // It is used to order the vertices of DAG
+    // It finds the cycle in directed graph, if any.
+    // Also, finds the shortest path from a src node to other nodes in O(V+E).
+    // Efficient replacement of dijkstra in case of DAG
     public void topologicalSort() {
         int in_degree[] = new int[V];
 
         for (int i = 0; i < V; i++) {
-            List<Integer> temp = adj[i];
-            for (int node : temp) {
+            for (int node : adj[i]){
                 in_degree[node]++;
             }
         }
