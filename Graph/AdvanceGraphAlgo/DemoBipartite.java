@@ -1,5 +1,6 @@
 import java.util.*;
 
+// Condition for Bipartite graph: It must not contain any odd length cycle.
 class DemoBipartite{
     public boolean isBipartite(ArrayList<Integer>[] adj){
         int V = adj.length;
