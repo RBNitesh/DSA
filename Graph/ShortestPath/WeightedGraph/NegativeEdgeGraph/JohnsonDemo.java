@@ -27,7 +27,7 @@ public class JohnsonDemo {
         return false;
     }
 
-    // Dijkstra Algorithm
+    // Dijkstra Algorithm O(E*logV)
     public int[] dijkstra(int src, int V, ArrayList<int[]>[] adj) {
         int[] dist = new int[V];
         Arrays.fill(dist, INF);
@@ -66,7 +66,7 @@ public class JohnsonDemo {
 
         int[] h = new int[V];
         // Detect Negative Cycle and compute the distance of all the nodes from an imaginary node
-        if (bellmanFord(V, adj, h)) {
+        if (bellmanFord(V, adj, h)) { // O(V*E)
             System.out.println("Negative Weight Cycle is Present");
             for (int[] di : d)
                 Arrays.fill(di, INF);
@@ -74,20 +74,20 @@ public class JohnsonDemo {
         }
 
         ArrayList<int[]>[] reweightedAdj = new ArrayList[V];
-        for (int i = 0; i < V; i++) {
+        for (int i = 0; i < V; i++) { // O(V)
             reweightedAdj[i] = new ArrayList<>();
         }
 
         // reweight the edge
-        for (int u = 0; u < V; u++) {
+        for (int u = 0; u < V; u++) { // O(E)
             for (int[] e : adj[u]) {
                 int v = e[0], wt = e[1];
                 reweightedAdj[u].add(new int[] { v, wt + h[u] - h[v] });
             }
         }
 
-        for (int u = 0; u < V; u++) {
-            int[] dist = dijkstra(u, V, reweightedAdj);
+        for (int u = 0; u < V; u++) { // O(V*E*logV)
+            int[] dist = dijkstra(u, V, reweightedAdj); // O(E*logV)
 
             for (int v = 0; v < V; v++) {
                 if (dist[v] == INF) {
