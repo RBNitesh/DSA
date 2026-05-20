@@ -1,26 +1,12 @@
+// Tag: Binary Lifting
 #include<bits/stdc++.h>
 using namespace std;
 
-bool dfs(int i, int curr, vector<int> &cycleLen, vector<bool> &vis, vector<bool> &vis1, vector<int> &teleport){
-    vis[curr] = true;
-    vis1[curr] = true;
-
-    int next = teleport[curr];
-
-    if(vis[next])
-        return;
-
-    if(!vis1[next]){
-        dfs(i + 1, next, cycleLen, vis, vis1, teleport);
-        if(cycleLen[next] != 0)
-            cycleLen[curr] = cycleLen[next];
-    }
-
-    vis1[curr] = false;
-    return false;
-}
-
 int main(){
+    ios_base::sync_with_stdio(false); 
+    cin.tie(NULL);
+    cout.tie(NULL);
+
     int n, q;
     cin >> n >> q;
 
@@ -29,35 +15,31 @@ int main(){
         cin >> teleport[i];
     }
 
-    vector<int> cycleLen(n + 1);
-    vector<bool> vis(n + 1);
-    vector<bool> vis1(n + 1);
+    int LOG = 30;
+    // next[u][j]: planet where you reach after taking (1 << j) flight starting from u.
+    int next[n+1][LOG];
 
-    for (int i = 1; i <= n; i++){
-        if(!vis[i]){
-            dfs(1, i, cycleLen, vis, vis1, teleport);
+    for (int u = 1; u <= n; u++){
+        next[u][0] = teleport[u];
+    }
+
+    // O(N*LOG)
+    for (int j = 1; j < LOG; j++){
+        for (int u = 1; u <= n; u++){
+            next[u][j] = next[next[u][j-1]][j - 1];
         }
     }
 
-    for(int it : cycleLen)
-        cout << it << " ";
-    cout << "\n";
-
-    for (int i = 1; i <= q; i++){
+    while(q-- > 0){ // O(q*LOG)
         int x, k;
         cin >> x >> k;
 
         int curr = x;
         while(k > 0){
-            if(cycleLen[curr] > 0){
-                k %= cycleLen[curr];
-            }
-            if(k > 0){
-                curr = teleport[curr];
-                k--;
-            }
+            int bit = __builtin_ctz(k); // finds no. of trailing zeros
+            curr = next[curr][bit];
+            k &= k - 1;
         }
-
         cout << curr << "\n";
     }
 }
