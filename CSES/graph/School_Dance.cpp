@@ -81,10 +81,10 @@ public:
                 max_flow++;
         }
         
-        // 1. Print total maximum pairs
+        // Print total maximum pairs
         cout << max_flow << "\n";
  
-        // 2. Traversed the graph to find the saturated paths (pairs)
+        // Traversed the graph to find the saturated paths (pairs)
         for (int u = 1; u <= n; u++){
             for(const Edge &e : adj[u]){
                 int v = e.to;
