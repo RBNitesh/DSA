@@ -1,3 +1,6 @@
+#include<bits/stdc++.h>
+using namespace std;
+
 class BinaryLifting {
     vector<vector<int>> up;
     int LOG;
