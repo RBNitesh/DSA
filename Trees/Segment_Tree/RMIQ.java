@@ -25,20 +25,17 @@ public class RMIQ {
     }
 
     // this function will find the index of maximum element in range [st, end] 
-    public static int rangeMaxIndexQuery(int i, int st, int end, int l, int r, int[] arr) {
-        if (st > r || end < l) // in case of invalid range
+    public static int rangeMaxIndexQuery(int i, int query_left, int query_right, int l, int r, int[] arr) {
+        if (query_left > r || query_right < l) // in case of invalid range
             return -1;
 
-        if (st <= l && end >= r) // in case range completely overlapping
+        if (query_left <= l && query_right >= r) // in case range completely overlapping
             return sgt[i];
 
         int mid = l + (r - l) / 2;
-        int leftMaxIndex = -1, rightMaxIndex = -1;
         
-        if(st <= mid)
-            leftMaxIndex = rangeMaxIndexQuery(2 * i + 1, st, Math.min(end, mid), l, mid, arr);
-        if(end > mid)
-            rightMaxIndex = rangeMaxIndexQuery(2 * i + 2, Math.max(st, mid + 1), end, mid + 1, r, arr);
+        int leftMaxIndex = rangeMaxIndexQuery(2 * i + 1, query_left, query_right, l, mid, arr);
+        int rightMaxIndex = rangeMaxIndexQuery(2 * i + 2, query_left, query_right, mid + 1, r, arr);
 
         if (leftMaxIndex == -1)
             return rightMaxIndex;

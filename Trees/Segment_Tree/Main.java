@@ -22,7 +22,7 @@ class SegmentTree {
     // point update query
     void update(int index, int val, int l, int r, int i, int[] sgt) {
         if (l == r && l == index) {
-            sgt[i] = val;
+            sgt[i] += val;
             return;
         }
 
@@ -39,24 +39,21 @@ class SegmentTree {
 
     // lazy-propagation
     // range update query
-    public void rangeUpdate(int st, int end, int val, int l, int r, int i, int[] sgt, int[] lazy) {
-        if (end < l || st > r || l > r)
+    public void rangeUpdate(int query_left, int query_right, int val, int l, int r, int i, int[] sgt, int[] lazy) {
+        if (query_left > r || query_right < l)
             return;
 
         if (lazy[i] != 0) {
             sgt[i] += (r - l + 1) * lazy[i];
-
             if (l != r) {
                 lazy[2 * i + 1] = lazy[i];
                 lazy[2 * i + 2] = lazy[i];
             }
-
             lazy[i] = 0;
         }
         
-        if (st <= l && end >= r) {
+        if (query_left <= l && query_right >= r) {
             sgt[i] += (r - l + 1) * val;
-
             if (l != r) {
                 lazy[2 * i + 1] = val;
                 lazy[2 * i + 2] = val;
@@ -66,32 +63,23 @@ class SegmentTree {
         
         int mid = l + (r - l) / 2;
 
-        if (st <= mid) {
-            rangeUpdate(st, Math.min(end, mid), val, l, mid, 2 * i + 1, sgt, lazy);
-        }
-        if (end > mid) {
-            rangeUpdate(Math.max(st, mid + 1), end, val, mid+1, r, 2 * i + 2, sgt, lazy);
-        }
+        rangeUpdate(query_left, query_right, val, l, mid, 2 * i + 1, sgt, lazy);
+        rangeUpdate(query_left, query_right, val, mid+1, r, 2 * i + 2, sgt, lazy);
         
         sgt[i] = sgt[2 * i + 1] + sgt[2 * i + 2];
     }
 
     // range sum query
-    public static int findSum(int st, int end, int l, int r, int i, int[] sgt) {
-        if (l >= st && r <= end) {
+    public static int findSum(int query_left, int query_right, int l, int r, int i, int[] sgt) {
+        if (query_left > r || query_right < l)
+            return 0;
+
+        if (l >= query_left && r <= query_right) 
             return sgt[i];
-        }
+
         int mid = l + (r - l) / 2;
-        int sum = 0;
-
-        if (st <= mid) {
-            sum += findSum(st, Math.min(end, mid), l, mid, 2 * i + 1,sgt);
-        }
-        if (end > mid) {
-            sum += findSum(Math.max(st, mid + 1), end, mid + 1, r, 2 * i + 2,sgt);
-        }
-
-        return sum;
+        return findSum(query_left, query_right, l, mid, 2 * i + 1, sgt)
+                + findSum(query_left, query_right, mid + 1, r, 2 * i + 2,sgt);
     }
 }
 
