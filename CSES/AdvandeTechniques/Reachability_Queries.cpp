@@ -28,30 +28,32 @@ ll INF2 = LLONG_MAX;
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("popcnt")
 
-const int MAXN = 5e4+1;
+vvi adj, reAdj, nodesInComp, dag;
+vb vis;
+vi comp, vec;
+
+const int MAXN = 50001;
 vector<bitset<MAXN>> reachable;
 
-vvi adj, reAdj, dag, nodesInComponent;
-vi vec, comp;
-vb vis;
-
+// Computes the reachability bitmask for each SCC in the condensation graph.
 void dfs3(int node){
     if(vis[node])
         return;
 
     vis[node] = true;
 
-    for(int u : nodesInComponent[node])
+    for(int u : nodesInComp[node])
         reachable[node].set(u);
 
     for(int v : dag[node]){
         dfs3(v);
         reachable[node] |= reachable[v];
-    } 
+    }
 }
 
+// Assigns vertices to their respective Strongly Connected Component (SCC) using the reverse graph.
 void dfs2(int node, int c){
-    if(comp[node])
+    if(comp[node] != -1)
         return;
 
     comp[node] = c;
@@ -60,10 +62,13 @@ void dfs2(int node, int c){
         dfs2(v, c);
 }
 
+// Post-order traversal to compute vertex finishing times (simulates topological sort of SCCs).
 void dfs1(int node){
     if(vis[node])
         return;
+
     vis[node] = true;
+
     for(int v : adj[node])
         dfs1(v);
 
@@ -71,20 +76,21 @@ void dfs1(int node){
 }
 
 int kosaraju(int n){
-    vec.reserve(n); // maximum no. of nodes that stack can have is n
     vis.assign(n + 1, false);
-    f(i, 1, n)
-        if(!vis[i])
-            dfs1(i);
+    vec.reserve(n);
 
-    comp.assign(n + 1, 0);
+    f(i, 1, n)
+        if (!vis[i])
+            dfs1(i);
+    
+    comp.assign(n + 1, -1);
     int c = 0;
     while(!vec.empty()){
-        int top = vec.back();
+        int curr = vec.back();
         vec.pop_back();
 
-        if(!comp[top])
-            dfs2(top, ++c);
+        if(comp[curr] == -1)
+            dfs2(curr, ++c);
     }
     return c;
 }
@@ -94,8 +100,9 @@ void solve(){
     cin >> n >> m >> q;
 
     adj.resize(n + 1);
-    reAdj.resize(n + 1);
-    f(i, 1, m){
+    reAdj.resize(n + 1); // Build the reverse graph. It is used in kosaraju to find the scc.
+
+    while(m-- > 0){
         int a, b;
         cin >> a >> b;
 
@@ -103,32 +110,31 @@ void solve(){
         reAdj[b].push_back(a);
     }
 
-    int c = kosaraju(n); // it returns no. of scc
+    int c = kosaraju(n); // Returns the total number of strongly connected components.
 
-    nodesInComponent.resize(c + 1);
-    f(i, 1, n)
-        nodesInComponent[comp[i]].push_back(i);
+    nodesInComp.resize(c + 1); // nodesInComp[u]: It stores all the nodes in component u.
+    f(u, 1, n)
+        nodesInComp[comp[u]].push_back(u); 
 
-    dag.resize(c + 1);
-    f(i, 1, n){
-        int u = i;
+    // Build a dag(directed acyclic graph) by compressing each component as a single node
+    dag.resize(c + 1); 
+    f(u, 1, n)
         for(int v : adj[u])
-            if(comp[u] != comp[v])
+            if(comp[u] != comp[v]) 
                 dag[comp[u]].push_back(comp[v]);
-    }
 
-    vis.assign(c + 1, false);
-    reachable.resize(c + 1);
-    f(i, 1, c){
-        if (!vis[i])
-            dfs3(i);
-    }
+    // reachable[i]: It stores the information about the nodes that can be visited from component i
+    reachable.resize(c + 1); 
+    vis.assign(c + 1, false); // re-assign the visited array to use for dag
+    f(u, 1, c) 
+        if (!vis[u])
+            dfs3(u); // run a dfs for the dag
 
-    f(i, 1, q){
+    while(q-- > 0){
         int a, b;
         cin >> a >> b;
 
-        if(reachable[comp[a]].test(b))
+        if(reachable[comp[a]].test(b)) // check if there is a path from comp[a] to node b
             cout << "YES" << "\n";
         else
             cout << "NO" << "\n";
