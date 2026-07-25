@@ -30,6 +30,7 @@ void toposort(int node){
     topo.push(node);
 }
 
+// assign the component id to the node
 void dfs(int node, int compId){
     if(comp[node] != 0)
         return;
