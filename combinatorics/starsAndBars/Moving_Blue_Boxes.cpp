@@ -22,19 +22,22 @@ ll INF2 = LLONG_MAX;
 #define si(x) scanf("%d", &x);
 
 void solve(){
-	int n;
-	si(n);
+    int n;
+    cin >> n;
 
-	
+    vi arr(n + 1);
+    f(1, n) { cin >> arr[i]; }
 }
 
-int main()
-{
-	ios::sync_with_stdio(false);
-	cin.tie(nullptr);
 
-	int t;
-	while(t-- > 0){
-		solve();
-	}
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int t;
+    cin >> t;
+
+    while(t-- > 0){
+        solve();
+    }
 }

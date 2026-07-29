@@ -21,11 +21,36 @@ ll INF2 = LLONG_MAX;
 
 #define si(x) scanf("%d", &x);
 
+ll exponent(ll base, ll pow){
+	// cout << base << " " << pow << "\n";
+	ll result = 1;
+	while(pow > 0){
+		if(pow&1)
+			result = result * base % M;
+		base = base * base % M;
+		pow >>= 1;
+	}
+	// cout << "res= " << result << "\n";
+	return result;
+}
+
+ll nCr(int n, int r){
+	if(n < r || n < 0 || r < 0)
+		return 0;
+	ll num = 1, den = 1;
+	for(int i = 1; i <= r; ++i){
+		num = num * (n - i + 1) % M;
+		den = den * i % M;
+	}
+	return num * exponent(den, M - 2) % M;
+}
+
 void solve(){
 	int n;
 	si(n);
 
-	
+	ll res = (2 * nCr(2 * n - 1, n-1) % M - n) % M;
+	cout << res << "\n";
 }
 
 int main()
@@ -33,7 +58,8 @@ int main()
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr);
 
-	int t;
+	int t = 1;
+	// si(t)
 	while(t-- > 0){
 		solve();
 	}
