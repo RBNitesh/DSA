@@ -46,8 +46,8 @@ class SegmentTree {
         if (lazy[i] != 0) {
             sgt[i] += (r - l + 1) * lazy[i];
             if (l != r) {
-                lazy[2 * i + 1] = lazy[i];
-                lazy[2 * i + 2] = lazy[i];
+                lazy[2 * i + 1] += lazy[i];
+                lazy[2 * i + 2] += lazy[i];
             }
             lazy[i] = 0;
         }
@@ -55,8 +55,8 @@ class SegmentTree {
         if (query_left <= l && query_right >= r) {
             sgt[i] += (r - l + 1) * val;
             if (l != r) {
-                lazy[2 * i + 1] = val;
-                lazy[2 * i + 2] = val;
+                lazy[2 * i + 1] += val;
+                lazy[2 * i + 2] += val;
             }
             return;
         }
