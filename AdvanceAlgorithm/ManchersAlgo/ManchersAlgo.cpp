@@ -3,6 +3,7 @@ using namespace std;
 
 class manacher{
     public:
+    // s is #c1#c2#c3#c4....cn#
     vector<int> manacher_odd(string s) {
         int n = s.size();
         s = "$" + s + "^";
