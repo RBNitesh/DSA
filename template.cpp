@@ -4,6 +4,7 @@ using ll = long long;
 
 using vi = vector<int>;
 using vl = vector<ll>;
+using vs = vector<string>;
 using vpi = vector<pair<int, int>>;
 using vpl = vector<pair<ll, ll>>;
 using vvi = vector<vector<int>>;
@@ -15,17 +16,18 @@ ll M = 1e9 + 7;
 ll INF1 = INT_MAX;
 ll INF2 = LLONG_MAX;
 
-#define f(a, b) for (int i = a; i <= b; ++i)
-#define F(a, b, k) for (int i = a; i <= b; i += k)
-#define sort(a) sort(begin(a), end(a))
+#define f(i, a, b) for (int i = a; i <= b; ++i)
+#define F(i, a, b, k) for (int i = a; i <= b; i += k)
+#define all(a) begin(a), end(a)
 
 #define si(x) scanf("%d", &x);
+
 
 void solve(){
 	int n;
 	si(n);
 
-	
+
 }
 
 int main()
