@@ -1,1 +1,1 @@
-# This file is used for testing
+# Test file
