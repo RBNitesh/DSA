@@ -13,8 +13,8 @@ using vvpi = vector<vector<pair<int, int>>>;
 using vvpl = vector<vector<pair<ll, ll>>>;
 
 ll M = 1e9 + 7;
-ll INF1 = INT_MAX;
-ll INF2 = LLONG_MAX;
+ll INF = INT_MAX;
+ll LINF  = LLONG_MAX;
 
 #define f(i, a, b) for (int i = a; i <= b; ++i)
 #define F(i, a, b, k) for (int i = a; i <= b; i += k)
