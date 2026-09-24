@@ -3,10 +3,15 @@ using namespace std;
 
 vector<vector<int>> adj;
 
+// subordinate of a boss: number of employes works below the boss 
+
 void dfs(int curr, vector<int> &dp){
     dp[curr] = 0;
     for(int v : adj[curr]){
         dfs(v, dp);
+        // dp[v]: subordinate of node v
+        // +1 is for node v. Because v will not be consider in subordinate of itself
+        // but v is a subordinate of own parent
         dp[curr] += (1 + dp[v]);
     }
 }
@@ -31,9 +36,7 @@ int main(){
     dfs(1, dp);
 
     for (int i = 1; i <= n; i++){
-        if(i > 1)
-            cout << " ";
-        cout << dp[i];
+        cout << dp[i] << " ";
     }
     cout << "\n";
 }
