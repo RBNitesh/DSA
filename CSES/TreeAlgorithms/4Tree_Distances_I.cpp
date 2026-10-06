@@ -22,6 +22,91 @@ public:
         adj[v].push_back(u);
     }
 
+    void computeMaxDist(int curr, int parent, int longestTailOfParent){
+        maxDist[curr] = max(depth[curr], 1 + longestTailOfParent); 
+
+        int n = adj[curr].size(); // total brachs
+
+        // stores length of longest branch in right
+        vector<int> suffMax; 
+        // stores length of longest brach in left
+        vector<int> preMax;
+
+        suffMax.reserve(n+1);
+        preMax.reserve(n+1);
+
+        int mx = -1;
+        for (int i = 0; i < n; ++i){
+            int v = adj[curr][i];
+
+            if(v == parent)
+                continue;
+
+            preMax.push_back(mx);
+            mx = max(mx, depth[v]);
+        }
+
+        mx = -1;
+        for (int i = n - 1; i >= 0; --i){
+            int v = adj[curr][i];
+
+            if(v == parent)
+                continue;
+
+            suffMax.push_back(mx);
+            mx = max(mx, depth[v]);
+        }
+
+        // reverse the suffMax to get the same ordering
+        reverse(suffMax.begin(), suffMax.end());
+        int idx = 0;
+
+        // for every node except parent, find the maximum of 
+        // longest branch in left and longest branch in right
+        for (int i = 0; i < n; ++i){
+            int v = adj[curr][i];
+
+            if(v == parent)
+                continue;
+
+            int longestTailOfCurrNode = max({preMax[idx], suffMax[idx], longestTailOfParent}) + 1;
+
+            computeMaxDist(v, curr, longestTailOfCurrNode);
+
+            ++idx;
+        }
+
+        // for (int i = 0; i < n; i++)
+        // {
+        //     int v = adj[curr][i];
+        //     if(v == parent){
+        //         preMax[i + 1] = max(preMax[i], 0);
+        //     }
+        //     else{
+        //         preMax[i + 1] = max(preMax[i], depth[v]);
+        //     }
+        // }
+
+        // for(int i = n-1; i >= 0; --i){
+        //     int v = adj[curr][i];
+        //     if(v == parent){
+        //         suffMax[i] = max(suffMax[i + 1], 0);
+        //     }
+        //     else{
+        //         suffMax[i] = max(suffMax[i + 1], depth[v]);
+        //     }
+        // }
+
+        // for (int i = 0; i < n; i++)
+        // {
+        //     int v = adj[curr][i];
+        //     if (v == parent)
+        //         continue;
+        //     computeMaxDist(v, curr, 1 + max({preMax[i], suffMax[i + 1], partialAns}));
+        // }
+    }
+
+    // compute depth and for nodes
     void computeDepth(int curr, int parent){
         int d = 0;
         for(int v : adj[curr]){
@@ -33,46 +118,9 @@ public:
         depth[curr] = d;
     }
 
-    void computeMaxDist(int curr, int parent, int partialAns){
-        maxDist[curr] = max(depth[curr], 1 + partialAns);
-
-        int n = adj[curr].size();
-        vector<int> suffMax(n+1, -1);
-        vector<int> preMax(n+1, -1);
-
-        for (int i = 0; i < n; i++)
-        {
-            int v = adj[curr][i];
-            if(v == parent){
-                preMax[i + 1] = max(preMax[i], -1);
-            }
-            else{
-                preMax[i + 1] = max(preMax[i], depth[v]);
-            }
-        }
-
-        for(int i = n-1; i >= 0; --i){
-            int v = adj[curr][i];
-            if(v == parent){
-                suffMax[i] = max(suffMax[i + 1], -1);
-            }
-            else{
-                suffMax[i] = max(suffMax[i + 1], depth[v]);
-            }
-        }
-
-        for (int i = 0; i < n; i++)
-        {
-            int v = adj[curr][i];
-            if(v == parent)
-                continue;
-            computeMaxDist(v, curr, 1 + max({preMax[i], suffMax[i + 1], partialAns}));
-        }
-    }
-
     void maxDistanceToAnyNode(){
         computeDepth(1, -1);
-        computeMaxDist(1, -1, -1);
+        computeMaxDist(1, -1, -1); // node, parent, longestTailOfParent
 
         for (int i = 1; i < (int)maxDist.size(); i++){
             if(i > 1)

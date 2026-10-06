@@ -3,85 +3,82 @@ using namespace std;
 typedef long long ll;
 
 class TreeDistanceII{
+    int n;
     vector<vector<int>> adj;
-    vector<pair<ll, int>> dsum;
+    vector<int> nodesInBranch;
     vector<ll> ans;
 
 public:
-    // O(n)
     TreeDistanceII(int n){
+        this->n = n;
         adj.resize(n + 1);
-        dsum.assign(n + 1, {0, 0});
+        nodesInBranch.assign(n + 1, 0);
         ans.assign(n + 1, 0);
     }
 
-    // O(1)
     void addEdge(int u, int v){
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
 
-    // O(n)
-    void computeDistanceSum(int node, int parent){
-        // sum of distances to all nodes, no. of nodes
-        dsum[node] = {0, 0}; 
+    /*  
+    steps:
+        step1: Remove the contribution of curr subtree from parent ans
+        step2: Add the no. of nodes in tree that are not present in curr subtree to the ans
+                because distance to those nodes from the curr node would be (1 + distance from parent node)
+        step3: Add the sum of distance to the nodes present in curr subtree
+    
+    Recurrence Derivation:
+        ans[node] = ans[parent] + N - 2 * nodesInBranch[node]
 
-        for(int v : adj[node]){
-            if(v == parent)
-                continue;
-            computeDistanceSum(v, node);
-            dsum[node].first += dsum[v].first + dsum[v].second;
-            dsum[node].second += dsum[v].second;
-        }
-        dsum[node].second += 1;
-    }
+        N - 2 * nodesInBranch[node] = (N - nodesInBranch[node])
+                                -(ans[node] + nodesInBranch[node])
+                                + ans[node] 
 
-    // O(n)
-    void solve(int node, int parent, int &N){
-        /*  
-        steps:
-            step1: Remove the contribution of curr subtree from parent ans
-            step2: Add the no. of nodes in tree that are not present in curr subtree to the ans
-                    because distance to those nodes from the curr node would be (1 + distance from parent node)
-            step3: Add the sum of distance to the nodes present in curr subtree
+        N - nodesInBranch[node] = No. of nodes in the tree which are not part of current subtree
+        ans[node] + nodesInBranch[node] = Contribution of curr subtree in parent answer
+        ans[node] = sum of distances to all nodes in the curr subtree from the node
+    */
+
+    void solve(int node, int parent){
+        ans[node] = ans[parent] + n - 2 * nodesInBranch[node];
         
-        Recurrence Derivation:
-            ans[node] = ans[parent] + N - 2*dsum[node].second
-
-            N - 2*dsum[node].second = (N - dsum[node].second)
-                                    -(dsum[node].first + dsum[node].second)
-                                    + dsum[node].first 
-
-            N - dsum[node].second = No. of nodes in the tree which are not part of current subtree
-            dsum[node].first + dsum[node].second = Contribution of curr subtree in parent answer
-            dsum[node].first = sum of distances to all nodes in the curr subtree from the node
-        */
-        ans[node] = ((parent != -1) ? ans[parent] : 0) + N - 2*dsum[node].second;
-
         for(int v : adj[node]){
-            if(v == parent)
-                continue;
-            solve(v, node, N);
+            if(v != parent)
+                solve(v, node);
         }
     }
 
-    // O(n)
-    void findDistance(int n){
-        // O(n)
-        computeDistanceSum(1, -1); 
-        // consider 0 as parent of 1
-        // then sum of distances to all nodes from 0 to sum of distances to all node from 1 and no. of nodes
-        ans[0] = dsum[1].first + dsum[1].second;
-        // O(n)
-        solve(1, 0, n);
+    ll calculateDistanceSum(int node, int parent){
+        ll dsum = 0;
 
-        // O(n)
-        for (int i = 1; i <= n; i++){
-            if(i > 1)
-                cout << " ";
-            cout << ans[i];
+        for(int v : adj[node])
+            if(v != parent)
+                dsum += calculateDistanceSum(v, node) + nodesInBranch[v];
+        
+        return dsum;
+    }
+
+    void countNodesInBranch(int node, int parent){
+        nodesInBranch[node] = 1;
+        for(int v : adj[node]){
+            if(v == parent)
+                continue;
+            countNodesInBranch(v, node);
+            nodesInBranch[node] += nodesInBranch[v];
         }
-        cout << "\n";
+    }
+
+    void findDistance(){
+        countNodesInBranch(1, -1); // count nodes in each branch
+
+        ans[1] = calculateDistanceSum(1, -1); // calculate the sum of distance to other nodes for root node
+
+        for(int v : adj[1])
+            solve(v, 1);
+
+        for (int i = 1; i <= n; ++i)
+            cout << ans[i] << " ";
     }
 };
 
@@ -92,10 +89,8 @@ int main(){
     int n;
     cin >> n;
 
-    // O(n)
     TreeDistanceII td2(n);
 
-    // O(n)
     for (int i = 1; i < n; i++){
         int u, v;
         cin >> u >> v;
@@ -103,6 +98,5 @@ int main(){
         td2.addEdge(u, v);
     }
 
-    // O(n)
-    td2.findDistance(n);
+    td2.findDistance();
 }

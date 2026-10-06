@@ -14,29 +14,71 @@ class TreeDiameter{
         adj[v].push_back(u);
     }
 
-    int dfs(int curr, int parent, int &res){
-        int maxi = 0, secondMax = 0;
-        for(int v : adj[curr]){
-            if(v == parent) continue;
+    // int dfs(int curr, int parent, int &res){
+    //     int maxi = 0, secondMax = 0;
+    //     for(int v : adj[curr]){
+    //         if(v == parent) continue;
 
-            int depth = dfs(v, curr, res);
+    //         int depth = dfs(v, curr, res);
 
-            // find top two subtree with highest depth
-            if(depth >= maxi){
-                secondMax = maxi;
-                maxi = depth;
+    //         // find top two subtree with highest depth
+    //         if(depth >= maxi){
+    //             secondMax = maxi;
+    //             maxi = depth;
+    //         }
+    //         else if(depth > secondMax){
+    //             secondMax = depth;
+    //         }
+    //     }
+    //     res = max(res, maxi + secondMax);
+    //     return 1 + maxi;
+    // }
+
+    pair<int,int> bfs(int root){
+        int totalNodes = adj.size();
+        int farthestNode;
+
+        vector<bool> vis(totalNodes + 1, false);
+
+        vector<int> vec; // using as queue
+        vec.reserve(totalNodes + 1);
+
+        int tail = 0;
+        vec.push_back(root);
+        vis[root] = true;
+
+        int level = 0;
+        while(tail < vec.size()){
+            int cnt = vec.size() - tail;
+
+            while(cnt-- > 0){
+                int u = vec[tail++];
+
+                farthestNode = u;
+
+                for(int v : adj[u]){
+                    if(!vis[v]){
+                        vec.push_back(v);
+                        vis[v] = true;
+                    }
+                }
             }
-            else if(depth > secondMax){
-                secondMax = depth;
-            }
+            ++level;
         }
-        res = max(res, maxi + secondMax);
-        return 1 + maxi;
+
+        return {farthestNode, level - 1};
     }
 
-    void findDiameter(int root){
+    void findDiameter(){
         int res = 0;
-        dfs(root, -1, res);
+        // using dfs
+        // dfs(1, -1, res); // root = 1
+
+        // using bfs
+        pair<int,int> farthestNodeAndDistance = bfs(1);
+        pair<int,int> otherEndsNodeAndDistance =  bfs(farthestNodeAndDistance.first);
+        res = otherEndsNodeAndDistance.second;
+
         cout << res << "\n";
     }
 };
@@ -57,5 +99,5 @@ int main(){
         td.addEdge(u, v);
     }
 
-    td.findDiameter(1);
+    td.findDiameter();
 }
