@@ -2,34 +2,38 @@
 using namespace std;
 typedef long long ll;
 
-int sum(int i, vector<int> &bit){
+vector<int> bit;
+int N;
+
+int sum(int i){
     int sum = 0;
-    for (; i >= 1; i -= (i & -i)){
+    while(i >= 1){
         sum += bit[i];
+        i -= i & -i;
     }
-    return sum;
 }
 
-void update(int i, int x, vector<int> &bit){
-    int N = bit.size();
-    for (; i < N; i+=(i & -i)){
+void update(int i, int x){
+    while(i <= N){
         bit[i] += x;
+        i += i & -i;
     }
 }
 
 int main(){
     vector<int> vec = {1, 2, 4, 5,3,-2, 5};
+    N = vec.size();
 
     // bit array is 1-indexed
     // reason: if i becomes 0, then in that case (i & -i) will be zero, 
     // and that can lead to infinitely running for loop in update function
-    vector<int> bit(vec.size()+1);
+    bit.resize(vec.size()+1);
 
     for (int i = 0; i < vec.size(); i++){
-        update(i + 1, vec[i], bit);
+        update(i + 1, vec[i]);
     }
 
     for (int i = 0; i < vec.size(); i++){
-        cout << sum(i + 1, bit) << " ";
+        cout << sum(i + 1) << " ";
     }
 }
